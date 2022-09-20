@@ -23,7 +23,7 @@ export class TagController {
     @Post()
     async createTag(@Body()payload:createTagDto){
 
-        const tag = await this.tagService.createTag(payload)
+        await this.tagService.createTag(payload)
         return {
             message: 'Tag created successfully',
             statusCode: HttpStatus.CREATED,

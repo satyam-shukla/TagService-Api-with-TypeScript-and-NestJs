@@ -1,6 +1,15 @@
 {
     "cSpell.words": [
         "conditiondata",
-        "pushfinally"
+        "datasource",
+        "Entites",
+        "Metadatas",
+        "nestjs",
+        "pushfinally",
+        "rdbms",
+        "satyam",
+        "tagservice",
+        "tagtestdb",
+        "typeorm"
     ]
 }

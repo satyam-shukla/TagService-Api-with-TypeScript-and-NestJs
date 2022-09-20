@@ -54,7 +54,7 @@ export class createTagDto implements ITag{
             }
         ]
     })
-    conditions?:tagConditionDto[]
+    conditions?:tagConditionDto[] = []
 
     @IsString()
     @ApiProperty()

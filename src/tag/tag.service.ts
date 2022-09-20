@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm'
 import { TagEntity } from './Entities/tag.entity';
 import {Repository} from 'typeorm'
@@ -46,7 +46,7 @@ export class TagService {
         if(!existingTag){
             const dataToInsert: Partial<TagEntity> = {
                 ...payload,
-                conditions: JSON.stringify(payload.conditions || []),
+                conditions: JSON.stringify(payload?.conditions || []),
                 status: tagStatus.ACTIVE,
                 isDynamic: !!payload.conditions,
                 };
@@ -54,22 +54,26 @@ export class TagService {
                 return await this.TagEntity.save(newTag)
         }
         else{
-            let existingConditionTag = JSON.parse(existingTag.conditions)
-            let mergeCondition = [...existingConditionTag,...payload.conditions]
-            const output = []
-            for(let condition of mergeCondition){
-                const existsCondition = output.filter((e)=>{
-                    return e.name===condition.name && e.type === condition.type
-                });
-                if(existsCondition.length === 0){
-                    output.push(condition)
-                }
-            };
-            
-            await this.TagEntity.save({
-                ...existingTag,
-                conditions: JSON.stringify(output)
-            })
+            if(payload?.conditions?.length > 0){
+                let existingConditionTag = JSON.parse(existingTag.conditions)
+                let mergeCondition = [...existingConditionTag,...payload.conditions]
+                const output = []
+                for(let condition of mergeCondition){
+                    const existsCondition = output.filter((e)=>{
+                        return e.name===condition.name && e.type === condition.type
+                    });
+                    if(existsCondition.length === 0){
+                        output.push(condition)
+                    }
+                };
+                
+               
+                await this.TagEntity.save({
+                    ...existingTag,
+                    isDynamic:false,
+                    conditions: JSON.stringify(output)
+                })
+            }
         }
     }  
     
